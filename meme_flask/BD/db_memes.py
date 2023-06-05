@@ -12,6 +12,49 @@ theConnection = mysql.connector.connect(
     #ssl_key="client-key.pem"
 )
 
-print(theConnection)
+DB_NAME = "meme_db"
+TABLE_URLS_NAME = "tUrls"
 
-theConnection.close()
+def getInsertUrlSt(
+    pStrMemeUrl:str,
+    pStrRedditName:str,
+    pStrAuthor:str="",
+    pDBName:str=DB_NAME,
+    pTableName:str=TABLE_URLS_NAME,
+
+)->str:
+    strNow = utilNowYMDHMS()
+    st:str=INSERT_RECORD_STATEMENT%(
+        pDBName,
+        pTableName,
+        pStrMemeUrl,
+        pStrRedditName,
+        pStrAuthor,
+        strNow
+    )
+    return st
+#def getInsertUrlSt
+
+if(theConnection):
+    cursor = theConnection.cursor()
+    
+    stInsert = getInsertUrlSt(
+        pStrUrl="https://arturmarques.com/edu/cn",
+        pStrContext="Cloud Computing",
+        pStrTitle="Criado agora, em 2022-05-10"
+    )
+    
+    
+    print("Will exec: ", stInsert)
+    executeResultIsAlwaysNone = cursor.execute(stInsert)
+    theConnection.commit()
+    print(executeResultIsAlwaysNone)
+
+    #this is a property, not a callable
+    iWhereInserted = cursor.lastrowid #Returns the value generated for an AUTO_INCREMENT column
+    print(iWhereInserted)
+
+    cursor.close()
+
+    theConnection.close()
+#if close
